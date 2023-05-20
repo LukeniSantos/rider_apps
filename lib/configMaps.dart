@@ -7,3 +7,6 @@ String mapKey = "AIzaSyCuBH7uNOGkVhFpKbmuIRIlxoK_82T6JOk";
 var firebaseUser;
 
 Users userCurrentInfo = Users();
+
+String serverToken =
+    "key=AAAAw54mHo8:APA91bF1cxjmBInBl3L58ZT5X9bX9niIyNGKTdsVHMGwdV7teaYGqe8Mqy6wXl1-pGr4BTI-d1114tYYoNiCDQGRG-ZPwkcilgeUjpoDA-PqPHzGa0-togKYwmknWHR4AOsAqMtrnn5q";

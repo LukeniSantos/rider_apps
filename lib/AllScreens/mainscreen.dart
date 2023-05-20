@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:rider_apps/AllScreens/loginscreen.dart';
 import 'package:rider_apps/AllScreens/searchScreen.dart';
 import 'package:rider_apps/AllWidgets/Divider.dart';
+import 'package:rider_apps/AllWidgets/noDriverAvailableDialog.dart';
 import 'package:rider_apps/AllWidgets/progressDialog.dart';
 import 'package:rider_apps/Assistants/assistanMethods.dart';
 import 'package:rider_apps/Assistants/geoFireAssistant.dart';
@@ -19,6 +20,7 @@ import 'package:rider_apps/DataHandler/appData.dart';
 import 'package:rider_apps/Models/directDetails.dart';
 import 'package:rider_apps/Models/nearbyAvaliableDrivers.dart';
 import 'package:rider_apps/configMaps.dart';
+import 'package:rider_apps/main.dart';
 
 /**
    * Texte começa aqui 
@@ -90,7 +92,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   late DatabaseReference rideRequestRef;
 
-  var nearByIcon;
+  BitmapDescriptor? nearByIcon;
+
+  List<NearbyAvaliableDrivers>? availableDrivers;
 
   @override
   void initState() {
@@ -104,7 +108,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         FirebaseDatabase.instance.ref().child("Ride Request").push();
 
     var pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
-    var dropOff = Provider.of<AppData>(context, listen: false).dropOfflocation;
+    var dropOff = Provider.of<AppData>(context, listen: false).dropOffLocation;
     Map pickUpLocMap = {
       "latitude": pickUp.latitude.toString(),
       "longitude": pickUp.longitude.toString(),
@@ -582,6 +586,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         child: ElevatedButton(
                           onPressed: () {
                             displayRequestRideContainer();
+                            availableDrivers =
+                                GeoFireAssistant.nearbyAvaliableDriversList;
+                            searchNearestDriver();
                           },
                           child: Padding(
                             padding: EdgeInsets.all(17.0),
@@ -711,7 +718,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Future<void> getPlaceDirection() async {
     var inicialPos =
         Provider.of<AppData>(context, listen: false).pickUpLocation;
-    var finalPos = Provider.of<AppData>(context, listen: false).dropOfflocation;
+    var finalPos = Provider.of<AppData>(context, listen: false).dropOffLocation;
 
     var pickUpLatLng = LatLng(inicialPos.latitude, inicialPos.longitude);
     var dropOffLatLng = LatLng(finalPos.latitude, finalPos.longitude);
@@ -891,7 +898,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       Marker marker = Marker(
           markerId: MarkerId('driver${driver.key}'),
           position: driverAvaiablePosition,
-          icon: nearByIcon,
+          icon: nearByIcon!,
           rotation: AssistantMethods.createRandomNumber(360));
 
       tMarkers.add(marker);
@@ -911,5 +918,39 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         nearByIcon = value;
       });
     }
+  }
+
+  void noDriverFound() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => NoDriverAvailableDialog());
+  }
+
+  void searchNearestDriver() {
+    if (availableDrivers!.length == 0) {
+      cancelRideResquest();
+      resetApp();
+      return;
+    }
+
+    var driver = availableDrivers?[0];
+    notifyDriver(driver!);
+    availableDrivers?.removeAt(0);
+  }
+
+  void notifyDriver(NearbyAvaliableDrivers driver) {
+    driverRef.child(driver.key).child("newRide").set(rideRequestRef.key);
+    driverRef
+        .child(driver.key)
+        .child("token")
+        .once()
+        .then((DatabaseEvent event) {
+      if (event.snapshot.value != null) {
+        String token = event.snapshot.value.toString();
+        AssistantMethods.sendNotificationToDriver(
+            token, context, rideRequestRef.key.toString());
+      }
+    });
   }
 }

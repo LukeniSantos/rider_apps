@@ -3,7 +3,7 @@ import 'package:rider_apps/Models/address.dart';
 
 class AppData extends ChangeNotifier {
   Address pickUpLocation = Address();
-  Address dropOfflocation = Address();
+  Address dropOffLocation = Address();
 
   void updatePickUpLocationAddress(Address pickUpAddress) {
     pickUpLocation = pickUpAddress;
@@ -11,7 +11,7 @@ class AppData extends ChangeNotifier {
   }
 
   void updateDropOffLocationAddress(Address dropOffAddress) {
-    dropOfflocation = dropOffAddress;
+    dropOffLocation = dropOffAddress;
     notifyListeners();
   }
 }

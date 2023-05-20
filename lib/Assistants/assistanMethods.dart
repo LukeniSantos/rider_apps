@@ -1,6 +1,5 @@
-import 'dart:ffi';
+import 'dart:convert';
 import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,6 +11,7 @@ import 'package:rider_apps/Models/address.dart';
 import 'package:rider_apps/Models/allUsers.dart';
 import 'package:rider_apps/Models/directDetails.dart';
 import 'package:rider_apps/configMaps.dart';
+import 'package:http/http.dart' as http;
 
 class AssistantMethods {
   static Future<String> searchCoordinateAdress(
@@ -100,5 +100,40 @@ class AssistantMethods {
     var random = Random();
     int radNumber = random.nextInt(num);
     return radNumber.toDouble();
+  }
+
+  static sendNotificationToDriver(
+      String token, context, String ride_request_id) async {
+    var destionation =
+        Provider.of<AppData>(context, listen: false).dropOffLocation;
+    Map<String, String> headerMap = {
+      'Content-Type': 'application/json',
+      'Authorization': serverToken,
+    };
+
+    Map notificationMap = {
+      'body': 'DropOff Address, ${destionation.placeName}',
+      'title': 'New Ride Request'
+    };
+
+    Map dataMap = {
+      'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+      'id': '1',
+      'status': 'done',
+      'ride_request_id': ride_request_id,
+    };
+
+    Map sendNotificationMap = {
+      "notification": notificationMap,
+      "data": dataMap,
+      "priority": "high",
+      "to": token,
+    };
+
+    var res = await http.post(
+      'https://fcm.googleapis.com/fcm/send' as Uri,
+      headers: headerMap,
+      body: jsonEncode(sendNotificationMap),
+    );
   }
 }
