@@ -164,6 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }))
         .user;
     if (firebaseUser != null) {
+      Navigator.pop(context);
       DataSnapshot snap;
       userRef.child(firebaseUser.uid).once().then((snap) {
         if (snap.snapshot.exists) {

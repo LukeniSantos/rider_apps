@@ -92,9 +92,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   late DatabaseReference rideRequestRef;
 
-  BitmapDescriptor? nearByIcon;
+  var nearByIcon;
 
-  List<NearbyAvaliableDrivers>? availableDrivers;
+  var availableDrivers;
 
   @override
   void initState() {
@@ -108,7 +108,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         FirebaseDatabase.instance.ref().child("Ride Request").push();
 
     var pickUp = Provider.of<AppData>(context, listen: false).pickUpLocation;
-    var dropOff = Provider.of<AppData>(context, listen: false).dropOffLocation;
+    var dropOff = Provider.of<AppData>(context, listen: false).dropOfflocation;
     Map pickUpLocMap = {
       "latitude": pickUp.latitude.toString(),
       "longitude": pickUp.longitude.toString(),
@@ -173,12 +173,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     });
   }
 
-  var currentPosition;
+  Position? currentPosition;
+
   void locatePosition() async {
     _getcurrentLocation();
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     currentPosition = position;
+
     LatLng latLatPosition = LatLng(position.latitude, position.longitude);
 
     CameraPosition cameraPosition =
@@ -191,7 +193,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     print("******************This is your Adress:: " +
         adress +
         "****************");
-    initGeoFireListner();
   }
 
   static const CameraPosition _kGooglePlex = CameraPosition(
@@ -201,12 +202,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    createIconMarker();
+    SizedBox(height: 24.0);
+//MERDAAAAAA
     return Scaffold(
       key: scaffoldKey,
-      appBar: AppBar(
-        title: Text("Main Screen"),
-      ),
       drawer: Container(
         color: Colors.white,
         width: 255.0,
@@ -553,7 +552,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               Expanded(child: Container()),
                               Text(
                                 ((tripDirectionDetails.distanceText != null)
-                                    ? "\$${AssistantMethods.calculateFares(tripDirectionDetails)}"
+                                    ? "${AssistantMethods.calculateFares(tripDirectionDetails)}kz"
                                     : ""),
                                 style: TextStyle(
                                   fontSize: 18.0,
@@ -586,9 +585,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         child: ElevatedButton(
                           onPressed: () {
                             displayRequestRideContainer();
-                            availableDrivers =
-                                GeoFireAssistant.nearbyAvaliableDriversList;
-                            searchNearestDriver();
                           },
                           child: Padding(
                             padding: EdgeInsets.all(17.0),
@@ -718,7 +714,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Future<void> getPlaceDirection() async {
     var inicialPos =
         Provider.of<AppData>(context, listen: false).pickUpLocation;
-    var finalPos = Provider.of<AppData>(context, listen: false).dropOffLocation;
+    var finalPos = Provider.of<AppData>(context, listen: false).dropOfflocation;
 
     var pickUpLatLng = LatLng(inicialPos.latitude, inicialPos.longitude);
     var dropOffLatLng = LatLng(finalPos.latitude, finalPos.longitude);
@@ -837,8 +833,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     //Comentario
     Geofire.initialize("availableDrivers");
     Geofire.queryAtLocation(
-            currentPosition.latitude, currentPosition.longitude, 15)!
-        .listen((map) {
+            currentPosition!.latitude, currentPosition!.longitude, 15)
+        ?.listen((map) {
       print(map);
       if (map != null) {
         var callBack = map['callBack'];
@@ -898,7 +894,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       Marker marker = Marker(
           markerId: MarkerId('driver${driver.key}'),
           position: driverAvaiablePosition,
-          icon: nearByIcon!,
+          icon: nearByIcon,
           rotation: AssistantMethods.createRandomNumber(360));
 
       tMarkers.add(marker);
@@ -928,15 +924,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   void searchNearestDriver() {
-    if (availableDrivers!.length == 0) {
+    if (availableDrivers.length == 0) {
       cancelRideResquest();
       resetApp();
+      noDriverFound();
       return;
     }
 
-    var driver = availableDrivers?[0];
-    notifyDriver(driver!);
-    availableDrivers?.removeAt(0);
+    var driver = availableDrivers[0];
+    notifyDriver(driver);
+    availableDrivers.removeAt(0);
   }
 
   void notifyDriver(NearbyAvaliableDrivers driver) {
@@ -950,6 +947,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         String token = event.snapshot.value.toString();
         AssistantMethods.sendNotificationToDriver(
             token, context, rideRequestRef.key.toString());
+      } else {
+        return;
       }
     });
   }

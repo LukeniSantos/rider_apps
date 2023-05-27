@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
@@ -105,7 +107,7 @@ class AssistantMethods {
   static sendNotificationToDriver(
       String token, context, String ride_request_id) async {
     var destionation =
-        Provider.of<AppData>(context, listen: false).dropOffLocation;
+        Provider.of<AppData>(context, listen: false).dropOfflocation;
     Map<String, String> headerMap = {
       'Content-Type': 'application/json',
       'Authorization': serverToken,
@@ -129,11 +131,14 @@ class AssistantMethods {
       "priority": "high",
       "to": token,
     };
-
-    var res = await http.post(
-      'https://fcm.googleapis.com/fcm/send' as Uri,
-      headers: headerMap,
-      body: jsonEncode(sendNotificationMap),
-    );
+    try {
+      var res = await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: headerMap,
+        body: utf8.encode(jsonEncode(sendNotificationMap)),
+      );
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }
