@@ -585,6 +585,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         child: ElevatedButton(
                           onPressed: () {
                             displayRequestRideContainer();
+                            /*  availableDrivers =
+                                GeoFireAssistant.nearbyAvaliableDriversList;
+                            searchNearestDriver();*/
                           },
                           child: Padding(
                             padding: EdgeInsets.all(17.0),
