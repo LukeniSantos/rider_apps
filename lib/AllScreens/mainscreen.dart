@@ -173,7 +173,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     });
   }
 
-  Position? currentPosition;
+  var currentPosition;
 
   void locatePosition() async {
     _getcurrentLocation();
@@ -190,9 +190,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
     String adress =
         await AssistantMethods.searchCoordinateAdress(position, context);
-    print("******************This is your Adress:: " +
-        adress +
-        "****************");
+    print("This is your Adress:: " + adress);
+
+    initGeoFireListner();
   }
 
   static const CameraPosition _kGooglePlex = CameraPosition(
@@ -585,9 +585,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         child: ElevatedButton(
                           onPressed: () {
                             displayRequestRideContainer();
-                            /*  availableDrivers =
+                            availableDrivers =
                                 GeoFireAssistant.nearbyAvaliableDriversList;
-                            searchNearestDriver();*/
+                            searchNearestDriver();
                           },
                           child: Padding(
                             padding: EdgeInsets.all(17.0),
@@ -836,9 +836,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     //Comentario
     Geofire.initialize("availableDrivers");
     Geofire.queryAtLocation(
-            currentPosition!.latitude, currentPosition!.longitude, 15)
-        ?.listen((map) {
-      print(map);
+            currentPosition.latitude, currentPosition.longitude, 15)!
+        .listen((map) {
+      print(map.toString());
       if (map != null) {
         var callBack = map['callBack'];
 
