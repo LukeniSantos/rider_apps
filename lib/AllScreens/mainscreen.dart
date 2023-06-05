@@ -586,7 +586,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           onPressed: () {
                             displayRequestRideContainer();
                             availableDrivers =
-                                GeoFireAssistant.nearbyAvaliableDriversList;
+                                GeoFireAssistant.nearbyAvailableDriversList;
                             searchNearestDriver();
                           },
                           child: Padding(
@@ -851,16 +851,16 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             nearbyAvailableDrivers.key = map["key"];
             nearbyAvailableDrivers.latitude = map["latitude"];
             nearbyAvailableDrivers.longitude = map["longitude"];
-            GeoFireAssistant.nearbyAvaliableDriversList
+            GeoFireAssistant.nearbyAvailableDriversList
                 .add(nearbyAvailableDrivers);
             if (nearbyAvailableDriverKeysLoaded == true) {
-              updateAvaliableDriversOnMap();
+              updateAvailableDriversOnMap();
             }
             break;
 
           case Geofire.onKeyExited:
             GeoFireAssistant.removeDriverFromList(map["key"]);
-            updateAvaliableDriversOnMap();
+            updateAvailableDriversOnMap();
             break;
 
           case Geofire.onKeyMoved:
@@ -870,11 +870,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             nearbyAvaliableDrivers.latitude = map["latitude"];
             nearbyAvaliableDrivers.longitude = map["longitude"];
             GeoFireAssistant.updateDriverNearbyLocation(nearbyAvaliableDrivers);
-            updateAvaliableDriversOnMap();
+            updateAvailableDriversOnMap();
             break;
 
           case Geofire.onGeoQueryReady:
-            updateAvaliableDriversOnMap();
+            updateAvailableDriversOnMap();
             break;
         }
       }
@@ -884,21 +884,20 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     //Comentario
   }
 
-  void updateAvaliableDriversOnMap() {
+  void updateAvailableDriversOnMap() {
     setState(() {
       markersSet.clear();
     });
 
     Set<Marker> tMarkers = Set<Marker>();
     for (NearbyAvailableDrivers driver
-        in GeoFireAssistant.nearbyAvaliableDriversList) {
+        in GeoFireAssistant.nearbyAvailableDriversList) {
       LatLng driverAvaiablePosition = LatLng(driver.latitude, driver.longitude);
       Marker marker = Marker(
-        markerId: MarkerId('driver${driver.key}'),
-        position: driverAvaiablePosition,
-        icon: nearByIcon,
-        //rotation: AssistantMethods.createRandomNumber(360)
-      );
+          markerId: MarkerId('driver${driver.key}'),
+          position: driverAvaiablePosition,
+          icon: nearByIcon,
+          rotation: AssistantMethods.createRandomNumber(360));
 
       tMarkers.add(marker);
     }
@@ -912,7 +911,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     if (nearByIcon == null) {
       ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context, size: Size(10, 2));
-      BitmapDescriptor.fromAssetImage(imageConfiguration, "images/car_ios.png")
+      BitmapDescriptor.fromAssetImage(
+              imageConfiguration, "images/car_android.png")
           .then((value) {
         nearByIcon = value;
       });
