@@ -1,7 +1,7 @@
-class NearbyAvaliableDrivers {
+class NearbyAvailableDrivers {
   var key;
   var latitude;
   var longitude;
 
-  NearbyAvaliableDrivers({this.key, this.latitude, this.longitude});
+  NearbyAvailableDrivers({this.key, this.latitude, this.longitude});
 }

@@ -88,7 +88,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   double searchContainerHeight = 300.0;
 
   bool drawerOpen = true;
-  bool nearbyAvaliableDriverKeysLoaded = false;
+  bool nearbyAvailableDriverKeysLoaded = false;
 
   late DatabaseReference rideRequestRef;
 
@@ -737,8 +737,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     });
 
     Navigator.pop(context);
-    print(
-        "***************************************Econding point ::***********************************");
+    print("*********Econding point ::");
     print(details!.encodedPoints);
 
     PolylinePoints polylinePoints = PolylinePoints();
@@ -847,14 +846,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
         switch (callBack) {
           case Geofire.onKeyEntered:
-            NearbyAvaliableDrivers nearbyAvaliableDrivers =
-                NearbyAvaliableDrivers();
-            nearbyAvaliableDrivers.key = map["key"];
-            nearbyAvaliableDrivers.latitude = map["latitude"];
-            nearbyAvaliableDrivers.longitude = map["longitude"];
+            NearbyAvailableDrivers nearbyAvailableDrivers =
+                NearbyAvailableDrivers();
+            nearbyAvailableDrivers.key = map["key"];
+            nearbyAvailableDrivers.latitude = map["latitude"];
+            nearbyAvailableDrivers.longitude = map["longitude"];
             GeoFireAssistant.nearbyAvaliableDriversList
-                .add(nearbyAvaliableDrivers);
-            if (nearbyAvaliableDriverKeysLoaded == true) {
+                .add(nearbyAvailableDrivers);
+            if (nearbyAvailableDriverKeysLoaded == true) {
               updateAvaliableDriversOnMap();
             }
             break;
@@ -865,8 +864,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             break;
 
           case Geofire.onKeyMoved:
-            NearbyAvaliableDrivers nearbyAvaliableDrivers =
-                NearbyAvaliableDrivers();
+            NearbyAvailableDrivers nearbyAvaliableDrivers =
+                NearbyAvailableDrivers();
             nearbyAvaliableDrivers.key = map["key"];
             nearbyAvaliableDrivers.latitude = map["latitude"];
             nearbyAvaliableDrivers.longitude = map["longitude"];
@@ -891,14 +890,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     });
 
     Set<Marker> tMarkers = Set<Marker>();
-    for (NearbyAvaliableDrivers driver
+    for (NearbyAvailableDrivers driver
         in GeoFireAssistant.nearbyAvaliableDriversList) {
       LatLng driverAvaiablePosition = LatLng(driver.latitude, driver.longitude);
       Marker marker = Marker(
-          markerId: MarkerId('driver${driver.key}'),
-          position: driverAvaiablePosition,
-          icon: nearByIcon,
-          rotation: AssistantMethods.createRandomNumber(360));
+        markerId: MarkerId('driver${driver.key}'),
+        position: driverAvaiablePosition,
+        icon: nearByIcon,
+        //rotation: AssistantMethods.createRandomNumber(360)
+      );
 
       tMarkers.add(marker);
     }
@@ -939,7 +939,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     availableDrivers.removeAt(0);
   }
 
-  void notifyDriver(NearbyAvaliableDrivers driver) {
+  void notifyDriver(NearbyAvailableDrivers driver) {
     driverRef.child(driver.key).child("newRide").set(rideRequestRef.key);
     driverRef
         .child(driver.key)

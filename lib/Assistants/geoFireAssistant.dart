@@ -1,14 +1,14 @@
 import 'package:rider_apps/Models/nearbyAvaliableDrivers.dart';
 
 class GeoFireAssistant {
-  static List<NearbyAvaliableDrivers> nearbyAvaliableDriversList = [];
+  static List<NearbyAvailableDrivers> nearbyAvaliableDriversList = [];
   static void removeDriverFromList(String key) {
     int index =
         nearbyAvaliableDriversList.indexWhere((element) => element.key == key);
     nearbyAvaliableDriversList.removeAt(index);
   }
 
-  static void updateDriverNearbyLocation(NearbyAvaliableDrivers driver) {
+  static void updateDriverNearbyLocation(NearbyAvailableDrivers driver) {
     int index = nearbyAvaliableDriversList
         .indexWhere((element) => element.key == driver.key);
 
