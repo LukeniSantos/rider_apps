@@ -203,6 +203,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     SizedBox(height: 24.0);
+    createIconMarker();
 //MERDAAAAAA
     return Scaffold(
       key: scaffoldKey,
@@ -894,10 +895,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         in GeoFireAssistant.nearbyAvailableDriversList) {
       LatLng driverAvaiablePosition = LatLng(driver.latitude, driver.longitude);
       Marker marker = Marker(
-          markerId: MarkerId('driver${driver.key}'),
-          position: driverAvaiablePosition,
-          icon: nearByIcon,
-          rotation: AssistantMethods.createRandomNumber(360));
+        markerId: MarkerId('driver${driver.key}'),
+        position: driverAvaiablePosition,
+        icon: nearByIcon,
+        //rotation: AssistantMethods.createRandomNumber(360),
+      );
 
       tMarkers.add(marker);
     }
@@ -911,8 +913,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     if (nearByIcon == null) {
       ImageConfiguration imageConfiguration =
           createLocalImageConfiguration(context, size: Size(10, 2));
-      BitmapDescriptor.fromAssetImage(
-              imageConfiguration, "images/car_android.png")
+      BitmapDescriptor.fromAssetImage(imageConfiguration, "images/car_ios.png")
           .then((value) {
         nearByIcon = value;
       });
