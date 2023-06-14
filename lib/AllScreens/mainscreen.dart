@@ -18,7 +18,7 @@ import 'package:rider_apps/Assistants/assistanMethods.dart';
 import 'package:rider_apps/Assistants/geoFireAssistant.dart';
 import 'package:rider_apps/DataHandler/appData.dart';
 import 'package:rider_apps/Models/directDetails.dart';
-import 'package:rider_apps/Models/nearbyAvaliableDrivers.dart';
+import 'package:rider_apps/Models/nearbyAvailableDrivers.dart';
 import 'package:rider_apps/configMaps.dart';
 import 'package:rider_apps/main.dart';
 
@@ -99,7 +99,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   String state = "normal";
 
-  var rideStreamSubscription;
+  StreamSubscription<DatabaseEvent>? rideStreamSubscription;
 
   @override
   void initState() {
@@ -139,12 +139,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     rideRequestRef.set(rideInfoMap);
 
     rideStreamSubscription = rideRequestRef.onValue.listen((event) {
-      Map<String, dynamic> data = event.snapshot.value as Map<String, dynamic>;
       if (event.snapshot.value == null) {
         return;
       }
-      if (data['status'] != null) {
-        statusRide = data['status'].toString();
+      if (event.snapshot.value != null) {
+        Map data = event.snapshot.value as Map;
+        if (data['status'] != null) {
+          statusRide = data['status'].toString();
+        }
       }
 
       if (statusRide == "accepted") {
@@ -993,8 +995,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     //Comentario
     Geofire.initialize("availableDrivers");
     Geofire.queryAtLocation(
-            currentPosition.latitude, currentPosition.longitude, 15)!
-        .listen((map) {
+            currentPosition.latitude, currentPosition.longitude, 15)
+        ?.listen((map) {
       print(map.toString());
       if (map != null) {
         var callBack = map['callBack'];

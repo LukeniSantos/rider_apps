@@ -1,4 +1,4 @@
-import 'package:rider_apps/Models/nearbyAvaliableDrivers.dart';
+import 'package:rider_apps/Models/nearbyAvailableDrivers.dart';
 
 class GeoFireAssistant {
   static List<NearbyAvailableDrivers> nearbyAvailableDriversList = [];
