@@ -101,6 +101,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   StreamSubscription<DatabaseEvent>? rideStreamSubscription;
 
+  bool isRequestingPositionDetails = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -142,17 +144,102 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       if (event.snapshot.value == null) {
         return;
       }
-      if (event.snapshot.value != null) {
-        Map data = event.snapshot.value as Map;
-        if (data['status'] != null) {
-          statusRide = data['status'].toString();
+      Map data = event.snapshot.value as Map;
+
+      if (data['car_details'] != null) {
+        setState(() {
+          carDetailsDriver = data['car_details'].toString();
+        });
+      }
+
+      if (data['driver_name'] != null) {
+        setState(() {
+          driverName = data['driver_name'].toString();
+        });
+      }
+
+      if (data['driver_phone'] != null) {
+        setState(() {
+          driverPhone = data['driver_phone'].toString();
+        });
+      }
+
+      if (data['driver_location'] != null) {
+        double driverLat =
+            double.parse(data['driver_location']["latitude"].toString());
+        double driverLng =
+            double.parse(data['driver_location']["longitude"].toString());
+        LatLng driverCurrentLocation = LatLng(driverLat, driverLng);
+
+        if (statusRide == "accepted") {
+          updateRideTimeToPickUpLoc(driverCurrentLocation);
+        } else if (statusRide == "onride") {
+          updateRideTimeToDropOffLoc(driverCurrentLocation);
+        } else if (statusRide == "arrived") {
+          rideStatus = "Driver has Arrived.";
+          Geofire.stopListener();
+          deleteGeofileMakers();
         }
+      }
+
+      if (data['status'] != null) {
+        statusRide = data['status'].toString();
       }
 
       if (statusRide == "accepted") {
         displayDriverDetailsContainer();
       }
     });
+  }
+
+  void deleteGeofileMakers() {
+    setState(() {
+      markersSet
+          .removeWhere((element) => element.markerId.value.contains("driver"));
+    });
+  }
+
+  void updateRideTimeToPickUpLoc(LatLng driverCurrentLocation) async {
+    if (isRequestingPositionDetails == false) {
+      isRequestingPositionDetails = true;
+
+      var positionUserLatLng =
+          LatLng(currentPosition.latitude, currentPosition.longitude);
+      var details = await AssistantMethods.obtainPlaceDirectionDetails(
+          driverCurrentLocation, positionUserLatLng);
+
+      if (details == null) {
+        return;
+      }
+
+      setState(() {
+        rideStatus = "Driver is Coming" + details.durationText;
+      });
+
+      isRequestingPositionDetails = false;
+    }
+  }
+
+  void updateRideTimeToDropOffLoc(LatLng driverCurrentLocation) async {
+    if (isRequestingPositionDetails == false) {
+      isRequestingPositionDetails = true;
+
+      var dropOff =
+          Provider.of<AppData>(context, listen: false).dropOfflocation;
+      var dropOffLatLng = LatLng(dropOff.latitude, dropOff.longitude);
+      var details = await AssistantMethods.obtainPlaceDirectionDetails(
+          driverCurrentLocation, dropOffLatLng);
+
+      if (details == null) {
+        return;
+      }
+
+      setState(() {
+        rideStatus = "Driver is Coming" + details.durationText;
+      });
+
+      isRequestingPositionDetails = false;
+    }
   }
 
   void cancelRideResquest() {
@@ -176,8 +263,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     setState(() {
       requestRideContainerHeight = 0.0;
       rideDetailsContainerHeight = 0;
-      bottonPaddingOfMap = 270.0;
-      driverDetailsContainerHeight = 270.0;
+      bottonPaddingOfMap = 280.0;
+      driverDetailsContainerHeight = 310.0;
     });
   }
 
@@ -783,21 +870,25 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          "Driver is Coming",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 20.0, fontFamily: "Brand-Bold"),
-                        ),
+                        Text(rideStatus,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 20.0, fontFamily: "Brand-Bold")),
                       ],
                     ),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 22.0),
+                    Divider(height: 2.0, thickness: 2.0),
+                    SizedBox(height: 22.0),
                     Text(
-                      "Lukeni Camposs",
+                      carDetailsDriver,
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    Text(
+                      driverName,
                       style: TextStyle(fontSize: 20.0),
                     ),
                     SizedBox(height: 22.0),
-                    Divider(),
+                    Divider(height: 2.0, thickness: 2.0),
                     SizedBox(height: 22.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
