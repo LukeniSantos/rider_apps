@@ -897,7 +897,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     });
 
     Navigator.pop(context);
-    print("*********Econding point ::");
+    print("**Econding point ::");
     print(details!.encodedPoints);
 
     PolylinePoints polylinePoints = PolylinePoints();
