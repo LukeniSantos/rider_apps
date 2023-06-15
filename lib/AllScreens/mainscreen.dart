@@ -10,6 +10,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rider_apps/AllScreens/loginscreen.dart';
+import 'package:rider_apps/AllScreens/ratingScreen.dart';
 import 'package:rider_apps/AllScreens/searchScreen.dart';
 import 'package:rider_apps/AllWidgets/Divider.dart';
 import 'package:rider_apps/AllWidgets/collectFareDialog.dart';
@@ -22,6 +23,7 @@ import 'package:rider_apps/Models/directDetails.dart';
 import 'package:rider_apps/Models/nearbyAvailableDrivers.dart';
 import 'package:rider_apps/configMaps.dart';
 import 'package:rider_apps/main.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /**
    * Texte começa aqui 
@@ -203,7 +205,15 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               fareAmount: fare,
             ),
           );
+          String driverId = "";
           if (res == "close") {
+            if (data['driver_id'] != null) {
+              driverId = data['driver_id'].toString();
+            }
+
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => RatingScreen(driverId: driverId)));
+
             rideRequestRef.onDisconnect();
             rideStreamSubscription?.cancel();
             rideStreamSubscription = null;
@@ -865,7 +875,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             ),
           ),
 
-          // Display Assisned
+          // Display Assisned driver info
           Positioned(
             bottom: 0.0,
             left: 0.0,
@@ -922,65 +932,39 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 55.0,
-                              width: 55.0,
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(26.0)),
-                                border:
-                                    Border.all(width: 2.0, color: Colors.grey),
-                              ),
-                              child: Icon(
-                                Icons.call,
+                        // call Button
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0),
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all<Color>(Colors.red),
+                            ),
+                            onPressed: () {
+                              launchUrl(Uri.parse('tel://${driverPhone}'));
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(17.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Text(
+                                    "Call Driver",
+                                    style: TextStyle(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
+                                  ),
+                                  Icon(
+                                    Icons.call,
+                                    color: Colors.white,
+                                    size: 26.0,
+                                  )
+                                ],
                               ),
                             ),
-                            SizedBox(height: 10.0),
-                            Text("call"),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 55.0,
-                              width: 55.0,
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(26.0)),
-                                border:
-                                    Border.all(width: 2.0, color: Colors.grey),
-                              ),
-                              child: Icon(
-                                Icons.list,
-                              ),
-                            ),
-                            SizedBox(height: 10.0),
-                            Text("details"),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 55.0,
-                              width: 55.0,
-                              decoration: BoxDecoration(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(26.0)),
-                                border:
-                                    Border.all(width: 2.0, color: Colors.grey),
-                              ),
-                              child: Icon(
-                                Icons.close,
-                              ),
-                            ),
-                            SizedBox(height: 10.0),
-                            Text("cancel"),
-                          ],
+                          ),
                         ),
                       ],
                     ),
