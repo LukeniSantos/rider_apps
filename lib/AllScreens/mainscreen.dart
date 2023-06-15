@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:rider_apps/AllScreens/loginscreen.dart';
 import 'package:rider_apps/AllScreens/searchScreen.dart';
 import 'package:rider_apps/AllWidgets/Divider.dart';
+import 'package:rider_apps/AllWidgets/collectFareDialog.dart';
 import 'package:rider_apps/AllWidgets/noDriverAvailableDialog.dart';
 import 'package:rider_apps/AllWidgets/progressDialog.dart';
 import 'package:rider_apps/Assistants/assistanMethods.dart';
@@ -140,7 +141,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
     rideRequestRef.set(rideInfoMap);
 
-    rideStreamSubscription = rideRequestRef.onValue.listen((event) {
+    rideStreamSubscription = rideRequestRef.onValue.listen((event) async {
       if (event.snapshot.value == null) {
         return;
       }
@@ -176,9 +177,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         } else if (statusRide == "onride") {
           updateRideTimeToDropOffLoc(driverCurrentLocation);
         } else if (statusRide == "arrived") {
-          rideStatus = "Driver has Arrived.";
-          Geofire.stopListener();
-          deleteGeofileMakers();
+          setState(() {
+            rideStatus = "Driver has Arrived.";
+          });
         }
       }
 
@@ -188,6 +189,27 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
       if (statusRide == "accepted") {
         displayDriverDetailsContainer();
+        Geofire.stopListener();
+        deleteGeofileMakers();
+      }
+
+      if (statusRide == "ended") {
+        if (data["fares"] != null) {
+          int fare = int.parse(data["fares"].toString());
+          var res = await showDialog(
+            context: context,
+            builder: (BuildContext context) => CollectFareDialog(
+              paymentMethod: "cash",
+              fareAmount: fare,
+            ),
+          );
+          if (res == "close") {
+            rideRequestRef.onDisconnect();
+            rideStreamSubscription?.cancel();
+            rideStreamSubscription = null;
+            resetApp();
+          }
+        }
       }
     });
   }
@@ -280,6 +302,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       markersSet.clear();
       circlesSet.clear();
       pLineCoordinates.clear();
+
+      statusRide = "";
+      driverName = "";
+      driverPhone = "";
+      carDetailsDriver = "";
+      rideStatus = "Driver is Coming";
+      driverDetailsContainerHeight = 0.0;
     });
     locatePosition();
   }
