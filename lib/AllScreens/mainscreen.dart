@@ -9,7 +9,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:rider_apps/AllScreens/HistoryScreen.dart';
 import 'package:rider_apps/AllScreens/loginscreen.dart';
+import 'package:rider_apps/AllScreens/profileTabPage.dart';
 import 'package:rider_apps/AllScreens/ratingScreen.dart';
 import 'package:rider_apps/AllScreens/registrarscreen.dart';
 import 'package:rider_apps/AllScreens/searchScreen.dart';
@@ -17,7 +19,7 @@ import 'package:rider_apps/AllWidgets/Divider.dart';
 import 'package:rider_apps/AllWidgets/collectFareDialog.dart';
 import 'package:rider_apps/AllWidgets/noDriverAvailableDialog.dart';
 import 'package:rider_apps/AllWidgets/progressDialog.dart';
-import 'package:rider_apps/Assistants/assistanMethods.dart';
+import 'package:rider_apps/Assistants/AssistantMethods.dart';
 import 'package:rider_apps/Assistants/geoFireAssistant.dart';
 import 'package:rider_apps/DataHandler/appData.dart';
 import 'package:rider_apps/Models/directDetails.dart';
@@ -25,6 +27,8 @@ import 'package:rider_apps/Models/nearbyAvailableDrivers.dart';
 import 'package:rider_apps/configMaps.dart';
 import 'package:rider_apps/main.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'aboutScreen.dart';
 
 /**
    * Texte começa aqui 
@@ -107,6 +111,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
   bool isRequestingPositionDetails = false;
 
+  String uName = "";
+
   @override
   void initState() {
     // TODO: implement initState
@@ -132,7 +138,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
 
     Map rideInfoMap = {
       "driver_id": "waiting",
-      "paymanet_method": "cash",
+      "payment_method": "cash",
       "pickup": pickUpLocMap,
       "dropoff": dropOffLocMap,
       "created_at": DateTime.now().toString(),
@@ -140,6 +146,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       "rider_phone": userCurrentInfo.phone,
       "pickup_address": pickUp.placeName,
       "dropoff_address": dropOff.placeName,
+      "ride_type": carRideType,
     };
 
     rideRequestRef.set(rideInfoMap);
@@ -345,7 +352,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     LatLng latLatPosition = LatLng(position.latitude, position.longitude);
 
     CameraPosition cameraPosition =
-        new CameraPosition(target: latLatPosition, zoom: 13);
+        new CameraPosition(target: latLatPosition, zoom: 16);
     newGoogleMapController
         .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
@@ -354,6 +361,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     print("This is your Adress:: " + adress);
 
     initGeoFireListner();
+    uName = userCurrentInfo.name;
+
+    AssistantMethods.retrieveHistoryInfo(context);
   }
 
   static const CameraPosition _kGooglePlex = CameraPosition(
@@ -389,14 +399,22 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Profile Name",
+                            uName,
                             style: TextStyle(
-                                fontSize: 16.0, fontFamily: "Brand-Bold"),
+                                fontSize: 16.0, fontFamily: "Brand Bold"),
                           ),
                           SizedBox(
                             height: 6.0,
                           ),
-                          Text("Visit Profile"),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ProfileTabPage()));
+                            },
+                            child: Text("Ver Perfil"),
+                          ),
                         ],
                       )
                     ],
@@ -405,25 +423,42 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
               ),
               DividerWidget(),
               SizedBox(height: 12.0),
-              ListTile(
-                leading: Icon(Icons.history),
-                title: Text(
-                  "History",
-                  style: TextStyle(fontSize: 15.0),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => HistoryScreen()));
+                },
+                child: ListTile(
+                  leading: Icon(Icons.history),
+                  title: Text(
+                    "Historico",
+                    style: TextStyle(fontSize: 15.0),
+                  ),
                 ),
               ),
               ListTile(
                 leading: Icon(Icons.person),
-                title: Text(
-                  "Visit Profile",
-                  style: TextStyle(fontSize: 15.0),
+                title: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProfileTabPage()));
+                  },
+                  child: Text("Ver Perfil", style: TextStyle(fontSize: 15.0)),
                 ),
               ),
-              ListTile(
-                leading: Icon(Icons.info),
-                title: Text(
-                  "About",
-                  style: TextStyle(fontSize: 15.0),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, AboutScreen.idScreen, (route) => false);
+                },
+                child: ListTile(
+                  leading: Icon(Icons.info),
+                  title: Text(
+                    "Sobre",
+                    style: TextStyle(fontSize: 15.0),
+                  ),
                 ),
               ),
               GestureDetector(
@@ -433,9 +468,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       context, LoginScreen.idScreen, (route) => false);
                 },
                 child: ListTile(
-                  leading: Icon(Icons.info),
+                  leading: Icon(Icons.logout),
                   title: Text(
-                    "Sign Out",
+                    "Sair",
                     style: TextStyle(fontSize: 15.0),
                   ),
                 ),
@@ -535,11 +570,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     children: [
                       SizedBox(height: 6.0),
                       Text(
-                        "Hi there",
+                        "Ola",
                         style: TextStyle(fontSize: 12.0),
                       ),
                       Text(
-                        "Where to?",
+                        "Deseja ir para?",
                         style:
                             TextStyle(fontSize: 20.0, fontFamily: "Brand-Bold"),
                       ),
@@ -576,7 +611,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 color: Colors.blueAccent,
                               ),
                               SizedBox(width: 10.0),
-                              Text("Search Drop Off")
+                              Text("Pesquisar Local De Destino")
                             ]),
                           ),
                         ),
@@ -602,7 +637,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                   : "Ad Home"),
                               SizedBox(height: 4.0),
                               Text(
-                                "Your Living home adress",
+                                "Localização atual",
                                 style: TextStyle(
                                     color: Colors.black54, fontSize: 12.0),
                               ),
@@ -678,12 +713,13 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   padding: EdgeInsets.symmetric(vertical: 17.0),
                   child: Column(
                     children: [
-                      //bike ride
+                      //bike Motos
                       GestureDetector(
                         onTap: () {
-                          displayToastMesenger("searching Bike...", context);
+                          displayToastMesenger("Procurando motos..", context);
                           setState(() {
                             state = "requesting";
+                            carRideType = "bike";
                           });
                           displayRequestRideContainer();
                           availableDrivers =
@@ -706,7 +742,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Bike",
+                                      "Moto",
                                       style: TextStyle(
                                           fontSize: 18.0,
                                           fontFamily: "Brand Bold"),
@@ -724,7 +760,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 Expanded(child: Container()),
                                 Text(
                                   ((tripDirectionDetails.distanceText != null)
-                                      ? "${AssistantMethods.calculateFares(tripDirectionDetails)}kz"
+                                      ? "${(AssistantMethods.calculateFares(tripDirectionDetails)) / 2}0kz"
                                       : ""),
                                   style: TextStyle(
                                     fontSize: 18.0,
@@ -743,10 +779,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       //uber go
                       GestureDetector(
                         onTap: () {
-                          displayToastMesenger(
-                              "searching Uber-Go ...", context);
+                          displayToastMesenger("Procurando carro...", context);
                           setState(() {
                             state = "requesting";
+                            carRideType = "uber-go";
                           });
                           displayRequestRideContainer();
                           availableDrivers =
@@ -769,7 +805,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Uber-go",
+                                      "Carro",
                                       style: TextStyle(
                                           fontSize: 18.0,
                                           fontFamily: "Brand Bold"),
@@ -787,7 +823,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                 Expanded(child: Container()),
                                 Text(
                                   ((tripDirectionDetails.distanceText != null)
-                                      ? "${AssistantMethods.calculateFares(tripDirectionDetails)}kz"
+                                      ? "${AssistantMethods.calculateFares(tripDirectionDetails)}.00kz"
                                       : ""),
                                   style: TextStyle(
                                     fontSize: 18.0,
@@ -803,67 +839,6 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       Divider(height: 2.0, thickness: 2.0),
                       SizedBox(height: 10.0),
                       //
-                      //uber-x
-                      GestureDetector(
-                        onTap: () {
-                          displayToastMesenger("searching Uber-X...", context);
-                          setState(() {
-                            state = "requesting";
-                          });
-                          displayRequestRideContainer();
-                          availableDrivers =
-                              GeoFireAssistant.nearbyAvailableDriversList;
-                          searchNearestDriver();
-                        },
-                        child: Container(
-                          width: double.infinity,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  "images/uberx.png",
-                                  height: 70.0,
-                                  width: 80.0,
-                                ),
-                                SizedBox(width: 16.0),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Uber-X",
-                                      style: TextStyle(
-                                          fontSize: 18.0,
-                                          fontFamily: "Brand Bold"),
-                                    ),
-                                    Text(
-                                      ((tripDirectionDetails.distanceText !=
-                                              null)
-                                          ? tripDirectionDetails.distanceText
-                                          : ""),
-                                      style: TextStyle(
-                                          fontSize: 16.0, color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                                Expanded(child: Container()),
-                                Text(
-                                  ((tripDirectionDetails.distanceText != null)
-                                      ? "${AssistantMethods.calculateFares(tripDirectionDetails)}kz"
-                                      : ""),
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontFamily: "Brand Bold",
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10.0),
-                      Divider(height: 2.0, thickness: 2.0),
-                      SizedBox(height: 10.0),
 
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -919,19 +894,19 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       child: AnimatedTextKit(
                         animatedTexts: [
                           ColorizeAnimatedText(
-                            'Requesting a ride...',
+                            'Solicitando corrida...',
                             textStyle: colorizeTextStyle,
                             textAlign: TextAlign.center,
                             colors: colorizeColors,
                           ),
                           ColorizeAnimatedText(
-                            'Please wait...',
+                            'Aguarde...',
                             textStyle: colorizeTextStyle,
                             textAlign: TextAlign.center,
                             colors: colorizeColors,
                           ),
                           ColorizeAnimatedText(
-                            'Finding a Driver...',
+                            'Procurando motorista...',
                             textStyle: colorizeTextStyle,
                             textAlign: TextAlign.center,
                             colors: colorizeColors,
@@ -969,7 +944,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     Container(
                       width: double.infinity,
                       child: Text(
-                        "Cancel ride",
+                        "Cacelar viagem",
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 12.0),
                       ),
@@ -1017,7 +992,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         Text(rideStatus,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontSize: 20.0, fontFamily: "Brand-Bold")),
+                                fontSize: 20.0, fontFamily: "Brand Bold")),
                       ],
                     ),
                     SizedBox(height: 22.0),
@@ -1094,7 +1069,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     showDialog(
         context: context,
         builder: (BuildContext context) =>
-            ProgressDialog(message: "Please wait..."));
+            ProgressDialog(message: "Aguarde..."));
 
     var details = await AssistantMethods.obtainPlaceDirectionDetails(
         pickUpLatLng, dropOffLatLng);
@@ -1204,8 +1179,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     //Comentario
     Geofire.initialize("availableDrivers");
     Geofire.queryAtLocation(
-            currentPosition.latitude, currentPosition.longitude, 15)
-        ?.listen((map) {
+            currentPosition.latitude, currentPosition.longitude, 15)!
+        .listen((map) {
       print(map.toString());
       if (map != null) {
         var callBack = map['callBack'];
@@ -1304,8 +1279,26 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     }
 
     var driver = availableDrivers[0];
-    notifyDriver(driver);
-    availableDrivers.removeAt(0);
+
+    driverRef
+        .child(driver.key)
+        .child("car_details")
+        .child("type")
+        .once()
+        .then((snap) async {
+      if (await snap.snapshot.value != null) {
+        String carType = snap.snapshot.value.toString();
+        if (carType == carRideType) {
+          notifyDriver(driver);
+          availableDrivers.removeAt(0);
+        } else {
+          displayToastMesenger(
+              carRideType + " driver not avilable. Try again.", context);
+        }
+      } else {
+        displayToastMesenger("No car found. Try again.", context);
+      }
+    });
   }
 
   void notifyDriver(NearbyAvailableDrivers driver) {

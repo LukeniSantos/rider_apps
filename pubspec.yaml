@@ -50,6 +50,7 @@ dependencies:
   flutter_geofire: ^2.0.3
   url_launcher: ^6.1.11
   smooth_star_rating_nsafe: 1.0.0+1
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

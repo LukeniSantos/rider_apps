@@ -6,14 +6,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:rider_apps/Assistants/resquestAssistants.dart';
 import 'package:rider_apps/DataHandler/appData.dart';
 import 'package:rider_apps/Models/address.dart';
 import 'package:rider_apps/Models/allUsers.dart';
 import 'package:rider_apps/Models/directDetails.dart';
+import 'package:rider_apps/Models/history.dart';
 import 'package:rider_apps/configMaps.dart';
 import 'package:http/http.dart' as http;
+
+import '../main.dart';
 
 class AssistantMethods {
   static Future<String> searchCoordinateAdress(
@@ -139,6 +143,60 @@ class AssistantMethods {
       );
     } catch (e) {
       print(e.toString());
+    }
+  }
+
+  static String formatTripDate(String date) {
+    DateTime dateTime = DateTime.parse(date);
+    String formattedDate =
+        "${DateFormat.MMMd().format(dateTime)}, ${DateFormat.y().format(dateTime)} - ${DateFormat.jm().format(dateTime)}";
+
+    return formattedDate;
+  }
+
+  static void retrieveHistoryInfo(context) {
+    //retried and display trip history
+    newRequestsRef.orderByChild("rider_name").once().then((data) {
+      if (data.snapshot.value != null) {
+        //update total number of trip counts to provide
+        Map<dynamic, dynamic> keys = data.snapshot.value as Map;
+        int tripCounter = keys.length;
+        Provider.of<AppData>(context, listen: false)
+            .updateTripsCounter(tripCounter);
+
+        //update trip keys to provider
+        List<String> tripHistoryKeys = [];
+        keys.forEach((key, value) {
+          tripHistoryKeys.add(key);
+        });
+
+        Provider.of<AppData>(context, listen: false)
+            .updateTripKeys(tripHistoryKeys);
+        obtainTripRequestHistoryData(context);
+      }
+    });
+  }
+
+  static void obtainTripRequestHistoryData(context) {
+    var keys = Provider.of<AppData>(context, listen: false).tripHistoryKeys;
+
+    for (String key in keys) {
+      newRequestsRef.child(key).once().then((data) {
+        if (data.snapshot.value != null) {
+          newRequestsRef
+              .child(key)
+              .child("rider_name")
+              .once()
+              .then((DatabaseEvent data) {
+            String name = data.snapshot.value.toString();
+            if (name == userCurrentInfo.name) {
+              var history = History.fromSnapshot(data.snapshot);
+              Provider.of<AppData>(context, listen: false)
+                  .updateTripHistoryData(history);
+            }
+          });
+        }
+      });
     }
   }
 }
