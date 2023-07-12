@@ -25,7 +25,7 @@ class NoDriverAvailableDialog extends StatelessWidget {
                   height: 10,
                 ),
                 Text(
-                  'No driver found',
+                  'Nenhum colega encontrado',
                   style: TextStyle(fontSize: 22.0, fontFamily: 'Brand-Bold'),
                 ),
                 SizedBox(
@@ -34,7 +34,7 @@ class NoDriverAvailableDialog extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Text(
-                    'No available driver found in the nearby, we suggest you try again shortly',
+                    'Nenhum colega disponível encontrado nas proximidades, sugerimos que tente novamente em breve',
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -56,7 +56,7 @@ class NoDriverAvailableDialog extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Close",
+                            "Fechar",
                             style: TextStyle(
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.bold,

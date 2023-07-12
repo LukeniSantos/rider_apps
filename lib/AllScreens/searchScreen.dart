@@ -58,7 +58,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       Center(
                         child: Text(
-                          "Set Drop Off",
+                          "Defina o destino",
                           style: TextStyle(
                               fontSize: 18.0, fontFamily: "Brand-bold"),
                         ),
@@ -87,7 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: TextField(
                               controller: pickUpTextEditingController,
                               decoration: InputDecoration(
-                                hintText: "PuckUp location",
+                                hintText: "Localização atual",
                                 fillColor: Colors.grey[400],
                                 filled: true,
                                 border: InputBorder.none,
@@ -126,7 +126,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               },
                               controller: dropOffTextEditingController,
                               decoration: InputDecoration(
-                                hintText: "Where to?",
+                                hintText: "Ir para?",
                                 fillColor: Colors.grey[400],
                                 filled: true,
                                 border: InputBorder.none,
@@ -244,7 +244,7 @@ class PredictionTile extends StatelessWidget {
     showDialog(
         context: context,
         builder: (BuildContext context) =>
-            ProgressDialog(message: "Setting Dropoff, please wait..."));
+            ProgressDialog(message: "Definindo destino, aguarde..."));
 
     String placeDetailUrl =
         "https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$mapKey";

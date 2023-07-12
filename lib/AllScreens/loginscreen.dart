@@ -38,7 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 1.0,
                 ),
                 Text(
-                  "Login as a Rider",
+                  "Login para passageiros",
                   style: TextStyle(fontSize: 24.0, fontFamily: "Brand Bold"),
                   textAlign: TextAlign.center,
                 ),
@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         obscureText: true,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.password),
-                          labelText: "Passord",
+                          labelText: "Senha",
                           labelStyle: TextStyle(
                             fontSize: 15.0,
                           ),
@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Login "),
+                            Text("Login"),
                             Icon(Icons.login_rounded),
                           ],
                         ),
@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           } else if (passwordTextEditingController
                               .text.isEmpty) {
                             displayToastMesenger(
-                                "passowd é obrigatoria", context);
+                                "Senha é obrigatoria", context);
                           } else {
                             loginAndAuthenticateUser(context);
                           }
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     } else {
       Navigator.pop(context);
-      displayToastMesenger("A senha ou email está errado.", context);
+      displayToastMesenger("A senha ou email está incorrecto.", context);
     }
   }
 }

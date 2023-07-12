@@ -34,7 +34,7 @@ class ProfileTabPage extends StatelessWidget {
             ),
             InfoCard(
               text:
-                  "${userCurrentInfo != null ? userCurrentInfo.nip.toString() : 'Nome_'}",
+                  "${userCurrentInfo != null ? userCurrentInfo.nip.toString() : 'NIP_'}",
               icon: Icons.numbers,
               onPressed: () async {
                 print("this is NIP.");
@@ -42,7 +42,7 @@ class ProfileTabPage extends StatelessWidget {
             ),
             InfoCard(
               text:
-                  "${userCurrentInfo != null ? userCurrentInfo.phone.toString() : 'Nome_'}",
+                  "${userCurrentInfo != null ? userCurrentInfo.phone.toString() : 'Telefone_'}",
               icon: Icons.phone,
               onPressed: () async {
                 print("this is phone.");
@@ -50,7 +50,7 @@ class ProfileTabPage extends StatelessWidget {
             ),
             InfoCard(
               text:
-                  "${userCurrentInfo != null ? userCurrentInfo.email.toString() : 'Nome_'}",
+                  "${userCurrentInfo != null ? userCurrentInfo.email.toString() : 'Email_'}",
               icon: Icons.email,
               onPressed: () async {
                 print("this is email.");
@@ -62,7 +62,7 @@ class ProfileTabPage extends StatelessWidget {
                     context, MainScreen.idScreen, (route) => false);
               },
               child: const Text(
-                'Go Back',
+                'Voltar',
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
               style: ButtonStyle(

@@ -36,7 +36,7 @@ class _RatingScreenState extends State<RatingScreen> {
                 height: 22.0,
               ),
               Text(
-                "Rate this Driver",
+                "Avalie este Motorista",
                 style: TextStyle(
                     fontSize: 20.0,
                     fontFamily: "Brand Bold",
@@ -56,27 +56,27 @@ class _RatingScreenState extends State<RatingScreen> {
 
                   if (starCounter == 1) {
                     setState(() {
-                      title = "Very Bad";
+                      title = "Muito mal";
                     });
                   }
                   if (starCounter == 2) {
                     setState(() {
-                      title = "Bad";
+                      title = "Mal";
                     });
                   }
                   if (starCounter == 3) {
                     setState(() {
-                      title = "Good";
+                      title = "Bom";
                     });
                   }
                   if (starCounter == 4) {
                     setState(() {
-                      title = "Very Good";
+                      title = "Muito bom";
                     });
                   }
                   if (starCounter == 5) {
                     setState(() {
-                      title = "Excellent";
+                      title = "Excelente";
                     });
                   }
                 },
@@ -128,7 +128,7 @@ class _RatingScreenState extends State<RatingScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          "Submit",
+                          "Enviar",
                           style: TextStyle(
                               fontSize: 20.0,
                               fontWeight: FontWeight.bold,

@@ -335,7 +335,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     await getPlaceDirection();
     setState(() {
       searchContainerHeight = 0;
-      rideDetailsContainerHeight = 340.0;
+      rideDetailsContainerHeight = 240.0;
       bottonPaddingOfMap = 360.0;
       drawerOpen = false;
     });
@@ -574,7 +574,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                         style: TextStyle(fontSize: 12.0),
                       ),
                       Text(
-                        "Deseja ir para?",
+                        "Vamos!?",
                         style:
                             TextStyle(fontSize: 20.0, fontFamily: "Brand-Bold"),
                       ),
@@ -664,7 +664,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("Add Add Work"),
+                              Text("Local do serviço"),
                               SizedBox(
                                 height: 4.0,
                               ),
@@ -716,7 +716,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                       //bike Motos
                       GestureDetector(
                         onTap: () {
-                          displayToastMesenger("Procurando motos..", context);
+                          displayToastMesenger("Procurando moto..", context);
                           setState(() {
                             state = "requesting";
                             carRideType = "bike";
@@ -742,7 +742,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Moto",
+                                      "Motorizada",
                                       style: TextStyle(
                                           fontSize: 18.0,
                                           fontFamily: "Brand Bold"),
@@ -906,7 +906,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                             colors: colorizeColors,
                           ),
                           ColorizeAnimatedText(
-                            'Procurando motorista...',
+                            'Procurando Colega...',
                             textStyle: colorizeTextStyle,
                             textAlign: TextAlign.center,
                             colors: colorizeColors,
@@ -1030,7 +1030,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                     MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
-                                    "Call Driver",
+                                    "Ligar ao condutor",
                                     style: TextStyle(
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.bold,
@@ -1293,10 +1293,12 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           availableDrivers.removeAt(0);
         } else {
           displayToastMesenger(
-              carRideType + " driver not avilable. Try again.", context);
+              carRideType + " Condutor não disponivel. tente novamente",
+              context);
         }
       } else {
-        displayToastMesenger("No car found. Try again.", context);
+        displayToastMesenger(
+            "Nenhum carro encontrado. Tente novamente.", context);
       }
     });
   }

@@ -10,7 +10,7 @@ Users userCurrentInfo = Users();
 
 int driverRequestTimeOut = 40;
 String statusRide = "";
-String rideStatus = "Driver is Coming";
+String rideStatus = "Colega a caminho";
 
 String carDetailsDriver = "";
 String driverName = "";

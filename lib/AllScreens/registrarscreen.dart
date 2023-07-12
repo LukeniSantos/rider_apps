@@ -41,7 +41,7 @@ class _RegistrarScreenState extends State<RegistrarScreen> {
                   height: 1.0,
                 ),
                 Text(
-                  "Register as a Rider",
+                  "Registre-se como pasageiro",
                   style: TextStyle(fontSize: 24.0, fontFamily: "Brand Bold"),
                   textAlign: TextAlign.center,
                 ),
@@ -58,7 +58,7 @@ class _RegistrarScreenState extends State<RegistrarScreen> {
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
                             prefixIcon: Icon(Icons.people_alt_rounded),
-                            labelText: "Name",
+                            labelText: "Nome",
                             labelStyle: TextStyle(
                               fontSize: 15.0,
                             ),
@@ -115,7 +115,7 @@ class _RegistrarScreenState extends State<RegistrarScreen> {
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
                             prefixIcon: Icon(Icons.phone),
-                            labelText: "Phone",
+                            labelText: "Contacto",
                             labelStyle: TextStyle(
                               fontSize: 15.0,
                             ),
@@ -134,7 +134,7 @@ class _RegistrarScreenState extends State<RegistrarScreen> {
                         obscureText: true,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.password),
-                          labelText: "Password",
+                          labelText: "Senha",
                           labelStyle: TextStyle(
                             fontSize: 15.0,
                           ),
@@ -153,7 +153,7 @@ class _RegistrarScreenState extends State<RegistrarScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Create Account "),
+                            Text("Criar conta"),
                             Icon(Icons.app_registration),
                           ],
                         ),

@@ -25,7 +25,7 @@ class CollectFareDialog extends StatelessWidget {
           children: [
             SizedBox(height: 22.0),
             Text(
-              "Trip Fare " /*+ rideType.toUpperCase() + ")"*/,
+              "Tarifa da comparticipação" /*+ rideType.toUpperCase() + ")"*/,
               style: TextStyle(fontSize: 16.0, fontFamily: "Brand Bold"),
             ),
             SizedBox(height: 22.0),
@@ -44,7 +44,7 @@ class CollectFareDialog extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                "This is the total trip amount, it has been charged to the rider.",
+                "Este é o valor total pela viagem, que foi cobrado do passageiro.",
                 textAlign: TextAlign.center,
               ),
             ),
@@ -55,7 +55,7 @@ class CollectFareDialog extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  Navigator.pop(context, "close");
+                  Navigator.pop(context, "Fechar");
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.deepPurpleAccent,
@@ -66,7 +66,7 @@ class CollectFareDialog extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Pay Cash",
+                        "Pagamento em Cash",
                         style: TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
@@ -82,9 +82,7 @@ class CollectFareDialog extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(
-              height: 30.0,
-            ),
+            SizedBox(height: 30.0),
           ],
         ),
       ),
