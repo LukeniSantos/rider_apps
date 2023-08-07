@@ -4,6 +4,8 @@ import 'package:flutter_geofire/flutter_geofire.dart';
 import 'package:rider_apps/AllScreens/mainscreen.dart';
 import 'package:rider_apps/configMaps.dart';
 
+import 'editar.dart';
+
 class ProfileTabPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -55,6 +57,23 @@ class ProfileTabPage extends StatelessWidget {
               onPressed: () async {
                 print("this is email.");
               },
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, EditarScreen.idScreen, (route) => false);
+              },
+              child: const Text(
+                'Editar',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+              ),
             ),
             TextButton(
               onPressed: () {

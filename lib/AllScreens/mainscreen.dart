@@ -27,7 +27,6 @@ import 'package:rider_apps/Models/nearbyAvailableDrivers.dart';
 import 'package:rider_apps/configMaps.dart';
 import 'package:rider_apps/main.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'aboutScreen.dart';
 
 /**
@@ -99,11 +98,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   bool drawerOpen = true;
   bool nearbyAvailableDriverKeysLoaded = false;
 
-  late DatabaseReference rideRequestRef;
+  DatabaseReference? rideRequestRef;
 
   BitmapDescriptor? nearByIcon;
 
-  var availableDrivers;
+  List<NearbyAvailableDrivers>? availableDrivers;
 
   String state = "normal";
 
@@ -149,9 +148,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       "ride_type": carRideType,
     };
 
-    rideRequestRef.set(rideInfoMap);
+    rideRequestRef!.set(rideInfoMap);
 
-    rideStreamSubscription = rideRequestRef.onValue.listen((event) async {
+    rideStreamSubscription = rideRequestRef?.onValue.listen((event) async {
       if (event.snapshot.value == null) {
         return;
       }
@@ -222,8 +221,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => RatingScreen(driverId: driverId)));
 
-            rideRequestRef.onDisconnect();
-            rideStreamSubscription?.cancel();
+            rideRequestRef!.onDisconnect();
+            rideRequestRef = null;
+            rideStreamSubscription!.cancel();
             rideStreamSubscription = null;
             resetApp();
           }
@@ -253,7 +253,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       }
 
       setState(() {
-        rideStatus = "Driver is Coming" + details.durationText;
+        rideStatus = "Condutor a caminho " + details.durationText;
       });
 
       isRequestingPositionDetails = false;
@@ -275,7 +275,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       }
 
       setState(() {
-        rideStatus = "Driver is Coming" + details.durationText;
+        rideStatus = "Condutor a caminho " + details.durationText;
       });
 
       isRequestingPositionDetails = false;
@@ -283,7 +283,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   void cancelRideResquest() {
-    rideRequestRef.remove();
+    rideRequestRef!.remove();
     setState(() {
       state = "normal";
     });
@@ -325,7 +325,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       driverName = "";
       driverPhone = "";
       carDetailsDriver = "";
-      rideStatus = "Driver is Coming";
+      rideStatus = "Condutor a caminho ";
       driverDetailsContainerHeight = 0.0;
     });
     locatePosition();
@@ -1271,14 +1271,14 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   void searchNearestDriver() {
-    if (availableDrivers.length == 0) {
+    if (availableDrivers!.length == 0) {
       cancelRideResquest();
       resetApp();
       noDriverFound();
       return;
     }
 
-    var driver = availableDrivers[0];
+    var driver = availableDrivers![0];
 
     driverRef
         .child(driver.key)
@@ -1290,7 +1290,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         String carType = snap.snapshot.value.toString();
         if (carType == carRideType) {
           notifyDriver(driver);
-          availableDrivers.removeAt(0);
+          availableDrivers!.removeAt(0);
         } else {
           displayToastMesenger(
               carRideType + " Condutor não disponivel. tente novamente",
@@ -1304,7 +1304,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   }
 
   void notifyDriver(NearbyAvailableDrivers driver) {
-    driverRef.child(driver.key).child("newRide").set(rideRequestRef.key);
+    driverRef.child(driver.key).child("newRide").set(rideRequestRef!.key);
     driverRef
         .child(driver.key)
         .child("token")
@@ -1313,7 +1313,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       if (event.snapshot.value != null) {
         String token = event.snapshot.value.toString();
         AssistantMethods.sendNotificationToDriver(
-            token, context, rideRequestRef.key.toString());
+            token, context, rideRequestRef!.key.toString());
       } else {
         return;
       }
@@ -1329,7 +1329,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
         driverRequestTimeOut--;
 
         driverRef.child(driver.key).child("newRide").onValue.listen((event) {
-          if (event.snapshot.toString() == "accepted") {
+          print(event.snapshot.value.toString());
+          if (event.snapshot.value.toString() == "accepted") {
             driverRef.child(driver.key).child("newRide").onDisconnect();
             driverRequestTimeOut = 40;
             timer.cancel();

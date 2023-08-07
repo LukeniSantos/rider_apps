@@ -78,12 +78,12 @@ class AssistantMethods {
 
   static int calculateFares(DirectionDetails directionDetails) {
     //in terms USD
-    double timeTraveledFare = (directionDetails.durationValue / 60) * 0.20;
-    double distancTraveledFare = (directionDetails.distanceValue / 1000) * 0.20;
+    double timeTraveledFare = (directionDetails.durationValue / 60) * 0.10;
+    double distancTraveledFare = (directionDetails.distanceValue / 1000) * 0.10;
     double totalFireAmount = timeTraveledFare + distancTraveledFare;
 
-    // 1$ = 160 rs
-    double totalLocalAmpount = totalFireAmount * 160;
+    // 1$ = 50kz
+    double totalLocalAmpount = totalFireAmount * 50;
 
     return totalLocalAmpount.truncate();
   }

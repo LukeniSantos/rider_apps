@@ -126,7 +126,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               },
                               controller: dropOffTextEditingController,
                               decoration: InputDecoration(
-                                hintText: "Ir para?",
+                                hintText: "Informar destino",
                                 fillColor: Colors.grey[400],
                                 filled: true,
                                 border: InputBorder.none,

@@ -9,6 +9,8 @@ import 'package:rider_apps/AllScreens/mainscreen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:rider_apps/DataHandler/appData.dart';
 
+import 'AllScreens/editar.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -42,6 +44,7 @@ class MyApp extends StatelessWidget {
           LoginScreen.idScreen: (context) => LoginScreen(),
           MainScreen.idScreen: (context) => MainScreen(),
           AboutScreen.idScreen: (context) => AboutScreen(),
+          EditarScreen.idScreen: (context) => EditarScreen(),
         },
         debugShowCheckedModeBanner: false,
       ),
